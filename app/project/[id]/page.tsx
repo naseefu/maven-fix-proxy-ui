@@ -112,12 +112,10 @@ export default function ProjectDetailPage() {
   useEffect(() => {
     if (!projectId) return;
 
-    const API_BASE = process.env.NEXT_PUBLIC_API_URL ||
-      (process.env.NEXT_PUBLIC_BASE_PATH
-        ? process.env.NEXT_PUBLIC_BASE_PATH.replace('/3000', '/8001')
-        : 'http://localhost:8001');
-    // Adjust this endpoint to match your actual streaming URL
-    const sseUrl = `${API_BASE}/git/stream/${projectId}`;
+    // Route SSE through the Next.js /api rewrite proxy (same as all other API calls)
+    const sseBase = (process.env.NEXT_PUBLIC_API_URL) ||
+      `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api`;
+    const sseUrl = `${sseBase}/git/stream/${projectId}`;
     const es = new EventSource(sseUrl);
 
     es.onmessage = (e) => {

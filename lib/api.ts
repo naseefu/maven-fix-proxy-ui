@@ -1,11 +1,14 @@
-// Compute API base URL at call-time (not module load time) so that
-// NEXT_PUBLIC_* env vars baked in at build time are always used correctly.
-// The Jupyter proxy forwards /proxy/8001 → localhost:8001 on the server side.
+// API calls go through the Next.js /api rewrite proxy (server-to-server).
+// This avoids CORS issues and doesn't require port 8001 to be
+// externally accessible via the Jupyter proxy.
+// Flow: browser → /proxy/3000/api/... → Next.js rewrite → localhost:8001/...
 function getApiBase(): string {
+  // Explicit override (e.g. for local dev without a proxy)
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   if (apiUrl) return apiUrl;
+  // Default: route through the Next.js server using the basePath prefix + /api
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
-  return basePath.includes('/3000') ? basePath.replace('/3000', '/8001') : `${basePath}/api`;
+  return `${basePath}/api`;
 }
 
 // Keep API_BASE as a convenience export (evaluated at first import — fine for client bundles)
