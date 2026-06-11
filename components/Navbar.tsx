@@ -103,7 +103,7 @@ export default function Navbar() {
             { label: 'Approvals History', href: '/approvals' },
             { label: 'Execution History', href: '/executions' },
           ].map((item) => (
-            <a
+            <Link
               key={item.label}
               href={item.href}
               style={{
@@ -119,7 +119,7 @@ export default function Navbar() {
               onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}
             >
               {item.label}
-            </a>
+            </Link>
           ))}
         </div>
 
