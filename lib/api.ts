@@ -1,5 +1,15 @@
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
-export const API_BASE = process.env.NEXT_PUBLIC_API_URL || (basePath.includes('/3000') ? basePath.replace('/3000', '/8000') : `${basePath}/api`);
+// Compute API base URL at call-time (not module load time) so that
+// NEXT_PUBLIC_* env vars baked in at build time are always used correctly.
+// The Jupyter proxy forwards /proxy/8001 → localhost:8001 on the server side.
+function getApiBase(): string {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (apiUrl) return apiUrl;
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+  return basePath.includes('/3000') ? basePath.replace('/3000', '/8001') : `${basePath}/api`;
+}
+
+// Keep API_BASE as a convenience export (evaluated at first import — fine for client bundles)
+export const API_BASE = getApiBase();
 
 export interface GitRepoDTO {
   project_name: string;

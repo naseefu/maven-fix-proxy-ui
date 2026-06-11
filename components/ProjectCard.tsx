@@ -182,7 +182,7 @@ export default function ProjectCard({ project, onDelete }: { project: Project; o
       {/* Actions */}
       <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
         <Link
-          href={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/project/${project.id}`}
+          href={`/project/${project.id}`}
           id={`view-project-${project.id}`}
           style={{
             flex: 1,
