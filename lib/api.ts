@@ -1,5 +1,5 @@
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
-export const API_BASE = process.env.NEXT_PUBLIC_API_URL || `${basePath}/api`;
+export const API_BASE = process.env.NEXT_PUBLIC_API_URL || (basePath.includes('/3000') ? basePath.replace('/3000', '/8000') : `${basePath}/api`);
 
 export interface GitRepoDTO {
   project_name: string;
