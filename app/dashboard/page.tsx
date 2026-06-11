@@ -9,6 +9,8 @@ import { getAllProjects, deleteProject, ProjectDetailsDTO } from '@/lib/api';
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function DashboardPage() {
+  console.log("DashboardPage component body executed!");
+  
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -51,6 +53,7 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => {
+    console.log("DashboardPage useEffect running! Calling loadProjects...");
     loadProjects();
   }, [loadProjects]);
 
