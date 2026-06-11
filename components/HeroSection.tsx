@@ -178,7 +178,7 @@ export default function HeroSection() {
                   <polygon points="10 8 16 12 10 16 10 8" fill="currentColor" />
                 </svg>
                 See How It Works
-              </a>
+              </Link>
             </div>
 
             {/* Social proof */}
