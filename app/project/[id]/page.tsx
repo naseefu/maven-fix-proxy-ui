@@ -257,7 +257,7 @@ export default function ProjectDetailPage() {
               <p style={{ color: '#64748b', fontSize: 14 }}>
                 {projectError ?? `No project with ID ${projectId} exists.`}
               </p>
-              <Link href={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/dashboard`} className="btn btn-ghost btn-sm" style={{ textDecoration: 'none' }}>
+              <Link href="/dashboard" className="btn btn-ghost btn-sm" style={{ textDecoration: 'none' }}>
                 ← Back to Dashboard
               </Link>
             </div>
@@ -300,7 +300,7 @@ export default function ProjectDetailPage() {
             }}
           >
             <Link
-              href={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/dashboard`}
+              href="/dashboard"
               style={{ color: '#64748b', textDecoration: 'none' }}
               onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = '#94a3b8')}
               onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = '#64748b')}
@@ -445,7 +445,7 @@ export default function ProjectDetailPage() {
                   </a>
                 )}
                 <Link
-                  href={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/dashboard`}
+                  href="/dashboard"
                   className="btn btn-ghost btn-sm"
                   style={{ textDecoration: 'none' }}
                 >
