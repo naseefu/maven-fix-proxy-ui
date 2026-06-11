@@ -24,8 +24,8 @@ interface ProjectData {
 const STATUS_COLOR: Record<string, string> = {
   running: '#f59e0b',
   success: '#10b981',
-  abort:   '#ef4444',
-  escalate:'#f97316',
+  abort: '#ef4444',
+  escalate: '#f97316',
   pending: '#64748b',
 };
 
@@ -36,12 +36,12 @@ export default function ProjectDetailPage() {
   const rawId = Array.isArray(params?.id) ? params.id[0] : params?.id;
   const projectId = Number(rawId) || 0;
 
-  const [project, setProject]       = useState<ProjectData | null>(null);
+  const [project, setProject] = useState<ProjectData | null>(null);
   const [loadingProject, setLoadingProject] = useState(true);
-  const [projectError, setProjectError]     = useState<string | null>(null);
+  const [projectError, setProjectError] = useState<string | null>(null);
 
-  const [steps, setSteps]   = useState<PipelineStep[]>([]);
-  const [logs, setLogs]     = useState<LogEntry[]>([]);
+  const [steps, setSteps] = useState<PipelineStep[]>([]);
+  const [logs, setLogs] = useState<LogEntry[]>([]);
   const [vulnUpdates, setVulnUpdates] = useState<Array<{ dep: string; from_ver: string; to_ver: string }>>([]);
   const [vulnSummary, setVulnSummary] = useState<string>('');
 
@@ -124,17 +124,17 @@ export default function ProjectDetailPage() {
 
         // ── Trace events → update pipeline steps ──────────────────────────
         if (type === 'trace') {
-          const stepId     = (data.id as string)     ?? 'unknown';
-          const stepTitle  = (data.title as string)  ?? stepId;
+          const stepId = (data.id as string) ?? 'unknown';
+          const stepTitle = (data.title as string) ?? stepId;
           const stepDetail = (data.detail as string) ?? '';
           const stepStatus = (data.status as string) ?? 'running';
 
           const mappedStatus: PipelineStep['status'] =
             stepStatus === 'completed' ? 'completed'
-            : stepStatus === 'running' ? 'running'
-            : stepStatus === 'warning' ? 'warning'
-            : stepStatus === 'error'   ? 'error'
-            : 'pending';
+              : stepStatus === 'running' ? 'running'
+                : stepStatus === 'warning' ? 'warning'
+                  : stepStatus === 'error' ? 'error'
+                    : 'pending';
 
           upsertStep(stepId, stepTitle, stepDetail, mappedStatus);
 
@@ -143,9 +143,9 @@ export default function ProjectDetailPage() {
             ...prev,
             {
               type: mappedStatus === 'completed' ? 'success'
-                  : mappedStatus === 'warning'   ? 'warn'
-                  : mappedStatus === 'error'     ? 'error'
-                  : 'trace',
+                : mappedStatus === 'warning' ? 'warn'
+                  : mappedStatus === 'error' ? 'error'
+                    : 'trace',
               message: `[${stepId}] ${stepDetail || stepTitle}`,
               timestamp: new Date().toLocaleTimeString('en-GB', { hour12: false }),
             },
@@ -170,7 +170,7 @@ export default function ProjectDetailPage() {
         // ── Custom node events (vuln scan results, etc.) ──────────────────
         if (type === 'custom_node_event') {
           const eventName = (data.event_name as string) ?? '';
-          const payload   = (data.data as Record<string, unknown>) ?? {};
+          const payload = (data.data as Record<string, unknown>) ?? {};
 
           if (eventName === 'project_fix_trace') {
             const vuln = payload.vuln_updates as Array<{ dep: string; from_ver: string; to_ver: string }>;
@@ -257,7 +257,7 @@ export default function ProjectDetailPage() {
               <p style={{ color: '#64748b', fontSize: 14 }}>
                 {projectError ?? `No project with ID ${projectId} exists.`}
               </p>
-              <Link href="/dashboard" className="btn btn-ghost btn-sm" style={{ textDecoration: 'none' }}>
+              <Link href={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/dashboard`} className="btn btn-ghost btn-sm" style={{ textDecoration: 'none' }}>
                 ← Back to Dashboard
               </Link>
             </div>
@@ -300,7 +300,7 @@ export default function ProjectDetailPage() {
             }}
           >
             <Link
-              href="/dashboard"
+              href={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/dashboard`}
               style={{ color: '#64748b', textDecoration: 'none' }}
               onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = '#94a3b8')}
               onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = '#64748b')}
@@ -445,7 +445,7 @@ export default function ProjectDetailPage() {
                   </a>
                 )}
                 <Link
-                  href="/dashboard"
+                  href={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/dashboard`}
                   className="btn btn-ghost btn-sm"
                   style={{ textDecoration: 'none' }}
                 >
@@ -476,9 +476,9 @@ export default function ProjectDetailPage() {
           >
             {[
               { id: 'pipeline', label: 'Pipeline Progress', icon: '⚙️' },
-              { id: 'logs',     label: 'Live Logs',          icon: '📋' },
-              { id: 'vuln',     label: 'Vulnerability Report', icon: '🛡️' },
-              { id: 'tokens',   label: 'Token Analysis',     icon: '📊' },
+              { id: 'logs', label: 'Live Logs', icon: '📋' },
+              { id: 'vuln', label: 'Vulnerability Report', icon: '🛡️' },
+              { id: 'tokens', label: 'Token Analysis', icon: '📊' },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -528,8 +528,8 @@ export default function ProjectDetailPage() {
               }}
             >
               {activeTab === 'pipeline' && <PipelineProgress steps={steps} />}
-              {activeTab === 'logs'     && <LogStream logs={logs} isRunning={isRunning} />}
-              {activeTab === 'tokens'   && (
+              {activeTab === 'logs' && <LogStream logs={logs} isRunning={isRunning} />}
+              {activeTab === 'tokens' && (
                 <div>
                   <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 20 }}>
                     📊 Token Analysis
@@ -543,7 +543,7 @@ export default function ProjectDetailPage() {
                   )}
                 </div>
               )}
-              {activeTab === 'vuln'     && (
+              {activeTab === 'vuln' && (
                 <div>
                   <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 20 }}>
                     🛡️ Vulnerability Scan Results

@@ -82,7 +82,7 @@ export default function CTASection() {
 
           <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
             <Link
-              href="/dashboard"
+              href={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/dashboard`}
               id="cta-go-to-dashboard"
               style={{
                 display: 'inline-flex',

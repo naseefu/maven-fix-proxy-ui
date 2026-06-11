@@ -1,15 +1,5 @@
-let dynamicApiBase = '/api';
-if (typeof window !== 'undefined') {
-  const match = window.location.pathname.match(/^(\/.*\/proxy\/)3000/);
-  if (match) {
-    dynamicApiBase = match[1] + '8000';
-  } else {
-    dynamicApiBase = process.env.NEXT_PUBLIC_API_URL || `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api`;
-  }
-} else {
-  dynamicApiBase = process.env.NEXT_PUBLIC_API_URL || `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api`;
-}
-export const API_BASE = dynamicApiBase;
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+export const API_BASE = process.env.NEXT_PUBLIC_API_URL || (basePath.includes('/3000') ? basePath.replace('/3000', '/8000') : `${basePath}/api`);
 
 export interface GitRepoDTO {
   project_name: string;
@@ -73,23 +63,13 @@ export async function deleteProject(id: number): Promise<ResponseDTO> {
 }
 
 export async function getAllProjects(): Promise<ProjectDetailsDTO[]> {
-  console.log("getAllProjects CALLED! API_BASE is:", API_BASE);
-  try {
-    const fetchUrl = `${API_BASE}/git/get-all-projects`;
-    console.log("Fetching URL:", fetchUrl);
-    const res = await fetch(fetchUrl);
-    console.log("Fetch response received:", res.status, res.ok);
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.message || err.detail || `HTTP ${res.status}`);
-    }
-    const data: ResponseDTO = await res.json();
-    console.log("Parsed JSON:", data);
-    return data.projects ?? [];
-  } catch (e) {
-    console.error("Fetch failed with error:", e);
-    throw e;
+  const res = await fetch(`${API_BASE}/git/get-all-projects`);
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || err.detail || `HTTP ${res.status}`);
   }
+  const data: ResponseDTO = await res.json();
+  return data.projects ?? [];
 }
 
 

@@ -154,7 +154,7 @@ export default function HeroSection() {
             {/* CTAs */}
             <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
               <Link
-                href="/dashboard"
+                href={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/dashboard`}
                 className="btn btn-primary"
                 style={{
                   height: 52,
@@ -169,7 +169,7 @@ export default function HeroSection() {
                 </svg>
               </Link>
               <Link
-                href="/#how-it-works"
+                href={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/#how-it-works`}
                 className="btn btn-ghost btn-lg"
                 style={{ textDecoration: 'none' }}
               >

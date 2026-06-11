@@ -3,24 +3,59 @@ const { parse } = require('url');
 const next = require('next');
 
 const dev = process.env.NODE_ENV !== 'production';
-const app = next({ dev });
+const hostname = 'localhost';
+const port = parseInt(process.env.PORT || '3000', 10);
+
+const app = next({ dev, hostname, port });
 const handle = app.getRequestHandler();
 
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+const fs = require('fs');
+const path = require('path');
+
+let envBasePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+try {
+  const envFile = fs.readFileSync(path.join(__dirname, '.env.local'), 'utf8');
+  const match = envFile.match(/^NEXT_PUBLIC_BASE_PATH=(.*)$/m);
+  if (match) {
+    envBasePath = match[1].trim();
+  }
+} catch (e) {
+  // .env.local might not exist, that's fine
+}
+
+const basePath = envBasePath;
 
 app.prepare().then(() => {
-  createServer((req, res) => {
-    // Jupyter Server Proxy strips the base path before passing the request to port 3000.
-    // Next.js needs the base path to be present to correctly match routes when basePath is configured.
-    // So we manually prepend it if it's missing!
-    if (basePath && !req.url.startsWith(basePath)) {
-      req.url = basePath + req.url;
+  createServer(async (req, res) => {
+    try {
+      const parsedUrl = parse(req.url, true);
+
+      // If Next.js is configured with a basePath, it expects ALL incoming requests to start with that basePath.
+      // However, some AMD/Enterprise port forwarding proxies strip the base path before sending the request to localhost.
+      // If the request doesn't have the basePath, we artificially prepend it so Next.js routing doesn't 404.
+      if (basePath && !req.url.startsWith(basePath)) {
+        req.url = `${basePath}${req.url}`;
+        parsedUrl.pathname = `${basePath}${parsedUrl.pathname}`;
+        parsedUrl.path = `${basePath}${parsedUrl.path}`;
+        parsedUrl.href = `${basePath}${parsedUrl.href}`;
+      }
+
+      await handle(req, res, parsedUrl);
+    } catch (err) {
+      console.error('Error occurred handling', req.url, err);
+      res.statusCode = 500;
+      res.end('internal server error');
     }
-    
-    const parsedUrl = parse(req.url, true);
-    handle(req, res, parsedUrl);
-  }).listen(3000, (err) => {
-    if (err) throw err;
-    console.log(`> Ready on http://localhost:3000 (with proxy rewrite for ${basePath})`);
-  });
+  })
+    .once('error', (err) => {
+      console.error(err);
+      process.exit(1);
+    })
+    .listen(port, () => {
+      console.log(`> Ready on http://${hostname}:${port}`);
+      if (basePath) {
+        console.log(`> Using basePath: ${basePath}`);
+        console.log(`> Handling stripped proxy requests automatically.`);
+      }
+    });
 });

@@ -15,7 +15,7 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handler);
   }, []);
 
-
+  const bp = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
   return (
     <nav
@@ -107,7 +107,7 @@ export default function Navbar() {
           ].map((item) => (
             <Link
               key={item.label}
-              href={item.href}
+              href={item.href.startsWith('#') ? item.href : `${bp}${item.href}`}
               style={{
                 color: '#94a3b8',
                 textDecoration: 'none',
@@ -127,7 +127,7 @@ export default function Navbar() {
 
         {/* CTA */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <Link href="/dashboard" className="btn btn-primary btn-sm" style={{ textDecoration: 'none' }}>
+          <Link href={`${bp}/dashboard`} className="btn btn-primary btn-sm" style={{ textDecoration: 'none' }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <rect x="3" y="3" width="7" height="7" rx="1" />
               <rect x="14" y="3" width="7" height="7" rx="1" />
